@@ -11,7 +11,7 @@ import MapKit
 import CoreLocation
 import AVFoundation
 
-class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
+class ViewController: UIViewController, CLLocationManagerDelegate {
     
     @IBOutlet weak var myMap: MKMapView!
     @IBOutlet weak var lblTimeInfo: UILabel!
@@ -26,7 +26,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     let synthesizer = AVSpeechSynthesizer()
     
     var count = 0
-    var distance = 0.0
+    var distance : CLLocationDistance = 0.0
     var bFirst : Bool?
     var bStartClicked : Bool?
     var test = 0
@@ -80,7 +80,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         test = test + 1
 //        lblDebug.text = String(format: "%d", test)
         let pLocation = locations.last
-        goLocation(latitude: (pLocation?.coordinate.latitude)!, longitude: (pLocation?.coordinate.longitude)!, delta: 0.01)
+        goLocation(latitude: (pLocation?.coordinate.latitude)!, longitude: (pLocation?.coordinate.longitude)!, delta: 0.001)
         if pLocation != nil && bStartClicked == true {
             currentlocation = CLLocation(latitude: (pLocation?.coordinate.latitude)!, longitude: (pLocation?.coordinate.longitude)!)
             if bFirst == false {
@@ -91,47 +91,64 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
                 self.myMap.addAnnotation(startPin)
                 bFirst = true
             } else{
-//                lblDebug.text = "거리 계산중..." + String(format: "%d", test)
+                // ----- 거리 계산 ----
+                lblDebug.text = "거리 계산중..." + String(format: "%f", currentlocation!.distance(from: formerlocation!))
                 distance = distance + currentlocation!.distance(from: formerlocation!)
                 
                 // 지도에 지나간위치 선으로 표시
-                let formerPlaceMark = MKPlacemark(coordinate: formerlocation!.coordinate)
-                let currentPlaceMark = MKPlacemark(coordinate: pLocation!.coordinate)
-                let directionRequest = MKDirections.Request()
-                directionRequest.source = MKMapItem(placemark: formerPlaceMark)
-                directionRequest.destination = MKMapItem(placemark: currentPlaceMark)
-                directionRequest.transportType = .walking
+                // 변수 일일이 추가 안해주면 선이 계속 안생기나?
+                var coordinates = [currentlocation!.coordinate, formerlocation!.coordinate]
+                let polyline : MKPolyline = MKPolyline(coordinates:&coordinates, count: coordinates.count)
+                do
+                {
+                    myMap.addOverlay(polyline)
+                }
+                catch
+                {
+                    lblDebug.text = "line 생성 중 오류 발생"
+                }
+                // -----
+//                let formerPlaceMark = MKPlacemark(coordinate: formerlocation!.coordinate)
+//                let currentPlaceMark = MKPlacemark(coordinate: pLocation!.coordinate)
+//                let directionRequest = MKDirections.Request()
+//                directionRequest.source = MKMapItem(placemark: formerPlaceMark)
+//                directionRequest.destination = MKMapItem(placemark: currentPlaceMark)
+//                directionRequest.transportType = .walking
                 
-                let directions = MKDirections(request: directionRequest)
-                directions.calculate { (response, error) in
-                    guard let directionResponse = response else {
-                        if let error = error {
-                            print("we have error getting directions")
-                        }
-                        return
-                    }
+//                let directions = MKDirections(request: directionRequest)
+//                directions.calculate { (response, error) in
+//                    guard let directionResponse = response else {
+//                        if let error = error {
+//                            print("we have error getting directions")
+//                        }
+//                        return
+//                    }
                     
-                    let route = directionResponse.routes[0]
-                    self.myMap.addOverlay(route.polyline, level : .aboveRoads)
+//                    let route = directionResponse.routes[0]
+//                    self.myMap.addOverlay(route.polyline, level : .aboveRoads)
                     
-                    let rect = route.polyline.boundingMapRect
+//                    let rect = route.polyline.boundingMapRect
                 }
                 
-                self.myMap.delegate = self
-                        
-            }
-           
-            formerlocation = currentlocation
+//                self.myMap.delegate = self
+                formerlocation = currentlocation
         }
-        // locationManager.stopUpdatingLocation() // 위치 업데이트를 멈춤 내가 주석침
+        // locationManager.stopUpdatingLocation() // 위치 업데이트를 멈춤,  내가 주석침
     }
+   
     
-    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-        let renderer = MKPolylineRenderer(overlay : overlay)
-        renderer.strokeColor = UIColor.green
-        renderer.lineWidth = 4.0
-        return renderer
-    }
+   func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+    lblDebug.text = "제발좀"
+    var testlineRenderer : MKPolylineRenderer?
+    if let polyline = overlay as? MKPolyline {
+            testlineRenderer! = MKPolylineRenderer(polyline: polyline)
+            testlineRenderer!.strokeColor = .blue
+            testlineRenderer!.lineWidth = 2.0
+        }
+                return testlineRenderer!
+   }
+    
+   
 
     @IBAction func btnClickedStart(_ sender: UIButton) {
         count = 0
@@ -158,7 +175,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         btnStop.isEnabled = false
         locationManager.stopUpdatingLocation() // 위치 업데이트를 멈춤 내가 주석침
 //        lblDebug.text = "중단함"
-        let utterance = AVSpeechUtterance(string: "달리기가 끝났어여~~ 오예~ 참고 달리기 시간은" +
+        let utterance = AVSpeechUtterance(string: "달리기가 끝났어여~~ 오예~ 참고로 달리기 시간은" +
             String(format : "%d", count) + "이고 거리는" + String(format: "%02f인데요?", distance))
         utterance.voice = AVSpeechSynthesisVoice(language: "ko-KR")
         utterance.rate = 0.4
