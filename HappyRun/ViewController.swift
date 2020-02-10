@@ -158,7 +158,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         btnStop.isEnabled = false
         locationManager.stopUpdatingLocation() // 위치 업데이트를 멈춤 내가 주석침
 //        lblDebug.text = "중단함"
-        let utterance = AVSpeechUtterance(string: "달리기가 끝났어여~~ 오예~ 참고로 달리기 시간은" +
+        let utterance = AVSpeechUtterance(string: "달리기가 끝났어여~~ 오예~ 참고 달리기 시간은" +
             String(format : "%d", count) + "이고 거리는" + String(format: "%02f인데요?", distance))
         utterance.voice = AVSpeechSynthesisVoice(language: "ko-KR")
         utterance.rate = 0.4
