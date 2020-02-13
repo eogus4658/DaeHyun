@@ -10,6 +10,7 @@ import UIKit
 import MapKit
 import CoreLocation
 import AVFoundation
+import SQLite3
 
 class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
     
@@ -19,6 +20,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     @IBOutlet weak var lblDebug: UILabel!
     @IBOutlet weak var btnStart: UIButton!
     @IBOutlet weak var btnStop: UIButton!
+    
+    let recordview : RecordViewController = RecordViewController()
     
     let annotation = MKPointAnnotation() // 이거 없으면 두번째 실행때 튕김
     let timeSelector: Selector = #selector(ViewController.updateTime)
@@ -39,8 +42,28 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     var currentlocation : CLLocation? = nil
     var myTimer : Timer?
     
+    var db : OpaquePointer?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let fileUrl = try!
+               FileManager.default.url(for: .documentDirectory,
+               in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("HappyRunDB.sqlite")
+               
+               if sqlite3_open(fileUrl.path, &db) != SQLITE_OK {
+                   print("Error opening database")
+                   return
+               }
+               
+               let createTableQuery = "CREATE TABLE IF NOT EXISTS HappyRun (id INTEGER PRIMARY KEY AUTOINCREMENT, record REAL, date TEXT)"
+               
+               if sqlite3_exec(db, createTableQuery, nil, nil, nil) != SQLITE_OK {
+                   print("Error creating table")
+                   return
+               }
+               print("Everything is fine")
+        
         // Do any additional setup after loading the view.
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -173,8 +196,29 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             utterance.voice = AVSpeechSynthesisVoice(language: "ko-KR")
             utterance.rate = 0.4
             synthesizer.speak(utterance)
-            let endPin = customPin(pinTitle: "종료위치", pinSubTitle: "", location: currentlocation!.coordinate)
-            self.myMap.addAnnotation(endPin)
+            if currentlocation != nil{
+                let endPin = customPin(pinTitle: "종료위치", pinSubTitle: "", location: currentlocation!.coordinate)
+                self.myMap.addAnnotation(endPin)
+            }
+            var i = count
+            var hour : Int?
+            var min : Int?
+            var sec : Int?
+            hour = i/(60*60)
+            i = i % (60*60)
+            min = i/60
+            i = i % 60
+            sec = i
+            let date = NSDate()
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd HH:mm:ss EEE"
+            let myrecord = "거리 :" + String(format: "%.2f", distance) + " m , 시간 : \(hour!)시간 \(min!)분 \(sec!)초"
+            let mydate = formatter.string(from: date as Date)
+            recordview._SaveToDatabase(record: myrecord, date: mydate)
+            recordview._UpdateTable()
+            if recordview.tableView != nil {
+                recordview.tableView.reloadData()
+            }
         }
 
         @objc func updateTime(){

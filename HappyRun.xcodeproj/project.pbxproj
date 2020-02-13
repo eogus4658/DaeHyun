@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E256C7A723F245F40064B4EC /* RecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E256C7A623F245F40064B4EC /* RecordViewController.swift */; };
+		E256C7BB23F265CA0064B4EC /* Running.png in Resources */ = {isa = PBXBuildFile; fileRef = E256C7BA23F265CA0064B4EC /* Running.png */; };
 		E2583A6A23EBC08000FFD85C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2583A6923EBC08000FFD85C /* AppDelegate.swift */; };
 		E2583A6E23EBC08000FFD85C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2583A6D23EBC08000FFD85C /* ViewController.swift */; };
 		E2583A7123EBC08000FFD85C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E2583A6F23EBC08000FFD85C /* Main.storyboard */; };
@@ -34,6 +36,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E256C7A623F245F40064B4EC /* RecordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordViewController.swift; sourceTree = "<group>"; };
+		E256C7BA23F265CA0064B4EC /* Running.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Running.png; sourceTree = "<group>"; };
 		E2583A6623EBC08000FFD85C /* HappyRun.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HappyRun.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2583A6923EBC08000FFD85C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E2583A6D23EBC08000FFD85C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -97,9 +101,11 @@
 		E2583A6823EBC08000FFD85C /* HappyRun */ = {
 			isa = PBXGroup;
 			children = (
+				E256C7BA23F265CA0064B4EC /* Running.png */,
 				E2583A6923EBC08000FFD85C /* AppDelegate.swift */,
 				E2583A6D23EBC08000FFD85C /* ViewController.swift */,
 				E2583A6F23EBC08000FFD85C /* Main.storyboard */,
+				E256C7A623F245F40064B4EC /* RecordViewController.swift */,
 				E2583A7223EBC08200FFD85C /* Assets.xcassets */,
 				E2583A7423EBC08200FFD85C /* LaunchScreen.storyboard */,
 				E2583A7723EBC08200FFD85C /* Info.plist */,
@@ -232,6 +238,7 @@
 				E2583A7623EBC08200FFD85C /* LaunchScreen.storyboard in Resources */,
 				E2583A7323EBC08200FFD85C /* Assets.xcassets in Resources */,
 				E2583A7123EBC08000FFD85C /* Main.storyboard in Resources */,
+				E256C7BB23F265CA0064B4EC /* Running.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,6 +263,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E256C7A723F245F40064B4EC /* RecordViewController.swift in Sources */,
 				E2583A6E23EBC08000FFD85C /* ViewController.swift in Sources */,
 				E2583A6A23EBC08000FFD85C /* AppDelegate.swift in Sources */,
 			);
