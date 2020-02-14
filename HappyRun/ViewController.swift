@@ -106,7 +106,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     
        func locationManager(_ manager: CLLocationManager, didUpdateLocations locations : [CLLocation]){
             test = test + 1
-    //        lblDebug.text = String(format: "%d", test)
             let pLocation = locations.last
             goLocation(latitude: (pLocation?.coordinate.latitude)!, longitude: (pLocation?.coordinate.longitude)!, delta: 0.001)
             if pLocation != nil && bStartClicked == true {
@@ -117,25 +116,19 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
                 myMap.addOverlay(aPolyline)
                 
                 if bFirst == false {
-    //                test = test + 1
-    //                lblDebug.text = "처음에 들어온데" + String(format: "%d", test)
                     // --- 시작점 표시
                     let startPin = customPin(pinTitle: "시작위치", pinSubTitle: "", location: pLocation!.coordinate)
                     self.myMap.addAnnotation(startPin)
                     bFirst = true
                 } else{
-                    // lblDebug.text = "거리 계산중..." + String(format: "%f", currentlocation!.distance(from: formerlocation!))
                     distance = distance + currentlocation!.distance(from: formerlocation!)
             }
                 formerlocation = currentlocation
            
         }
-         // locationManager.stopUpdatingLocation() // 위치 업데이트를 멈춤 내가 주석침
     }
 
         func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-//            test2 = test2 + 1
-//            lblDebug.text = "선 그리기 - mapView " + String(format : "%d", test2)
             let renderer = MKPolylineRenderer(overlay : overlay)
             renderer.strokeColor = UIColor.green
             renderer.lineWidth = 4.0
@@ -150,6 +143,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             btnStart.isEnabled = false
             btnStop.isEnabled = true
             myTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: timeSelector, userInfo: nil, repeats: true)
+            locationData.removeAll()
             locationManager.startUpdatingLocation()
 
             let utterance = AVSpeechUtterance(string: "즐거운 달리기 되세요~~")
@@ -167,7 +161,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             btnStop.isEnabled = false
             locationManager.stopUpdatingLocation() // 위치 업데이트를 멈춤 내가 주석침
             myMap.showsUserLocation = false
-    //        lblDebug.text = "중단함"
             let utterance = AVSpeechUtterance(string: "달리기가 끝났어여~~ 오예~ 참고로 달리기 시간은" +
                 String(format : "%d", count) + "이고 거리는" + String(format: "%02f인데요?", distance))
             utterance.voice = AVSpeechSynthesisVoice(language: "ko-KR")
