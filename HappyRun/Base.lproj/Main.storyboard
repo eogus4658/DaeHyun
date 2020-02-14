@@ -11,7 +11,7 @@
         <!--Running-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="HappyRun" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="RVC" id="BYZ-38-t0r" customClass="ViewController" customModule="HappyRun" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -59,6 +59,13 @@
                                 <rect key="frame" x="16" y="20" width="343" height="357"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </mapView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Debug2" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vUp-GN-ISN">
+                                <rect key="frame" x="16" y="543" width="343" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
@@ -68,6 +75,7 @@
                         <outlet property="btnStart" destination="zFZ-Le-uXT" id="Ibs-h9-NQg"/>
                         <outlet property="btnStop" destination="Z8S-gj-NK3" id="P4J-G0-E25"/>
                         <outlet property="lblDebug" destination="BBo-50-Hfe" id="HKa-Dx-JEH"/>
+                        <outlet property="lblDebug2" destination="vUp-GN-ISN" id="x0C-lu-Avk"/>
                         <outlet property="lblDistanceInfo" destination="BlM-2R-sQn" id="CCb-8b-vBl"/>
                         <outlet property="lblTimeInfo" destination="kBb-Lr-X8H" id="dTa-Dj-gT3"/>
                         <outlet property="myMap" destination="GNx-xc-sMJ" id="gYv-u8-yjn"/>
@@ -75,7 +83,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1082" y="-239"/>
+            <point key="canvasLocation" x="1080.8" y="-239.73013493253376"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="SE0-Mo-fT7">

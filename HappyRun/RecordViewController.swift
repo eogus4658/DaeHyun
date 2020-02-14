@@ -9,15 +9,10 @@
 import UIKit
 import SQLite3
 
-protocol SendDataDelegate{
-    func sendData(data : Bool)
-}
-
 class RecordViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var tableView: UITableView!
     
-    var delegate: SendDataDelegate?
     
     var db : OpaquePointer?
     
@@ -30,14 +25,12 @@ class RecordViewController: UIViewController, UITableViewDelegate, UITableViewDa
         // Do any additional setup after loading the view.
         tableView.delegate = self
         tableView.dataSource = self
-        RecordArray.removeAll()
-        DateArray.removeAll()
-        
-        
         print("RecordViewController viewdidload")
-        _UpdateTable(index : 0)
-        delegate?.sendData(data: true)
-        dismiss(animated: true, completion: nil)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        _UpdateTable()
+        tableView.reloadData()
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section : Int) -> Int {
@@ -56,7 +49,30 @@ class RecordViewController: UIViewController, UITableViewDelegate, UITableViewDa
         
         return cell
     }
-
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete{
+            let currentcell = tableView.cellForRow(at: indexPath)
+            print(currentcell!.detailTextLabel!.text!)
+            let queryString = "DELETE FROM HappyRun WHERE date == '\(currentcell!.detailTextLabel!.text!)'"
+            var stmt:OpaquePointer?
+            if sqlite3_prepare(db, queryString, -1, &stmt, nil) == SQLITE_OK {
+                    if sqlite3_step(stmt) == SQLITE_DONE {
+                        print("Successfully deleted row.")
+                    } else {
+                        print("Could not delete row.")
+                    }
+                    } else {
+                           print("DELETE statement could not be prepared")
+                       }
+            sqlite3_finalize(stmt)
+            
+            RecordArray.remove(at: indexPath.row)
+            DateArray.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        }
+    }
+   
     func _SaveToDatabase(record : String, date : String){
         let fileUrl = try!
         FileManager.default.url(for: .documentDirectory,
@@ -103,8 +119,10 @@ class RecordViewController: UIViewController, UITableViewDelegate, UITableViewDa
         sqlite3_finalize(stmt)
     }
     
-    func _UpdateTable(index : Int){ // reload : 1 , 그냥 : 0
+    func _UpdateTable(){
         print("Updatetable")
+        RecordArray.removeAll()
+        DateArray.removeAll()
         let fileUrl = try!
                FileManager.default.url(for: .documentDirectory,
                in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("HappyRunDB.sqlite")
@@ -133,21 +151,17 @@ class RecordViewController: UIViewController, UITableViewDelegate, UITableViewDa
                print ("sqlite3_step : " + String(format: "%d", sqlite3_step(stmtquery) ))
                print ("SQLITE_ROW : " + String(format: "%d", SQLITE_ROW ))
                while(sqlite3_step(stmtquery) == SQLITE_ROW) {
+                   
                    let record = String(cString: sqlite3_column_text(stmtquery, 1))
                    let date = String(cString: sqlite3_column_text(stmtquery, 2))
-                   //print("Loading Step")
-                   //print("record : " + record)
-                   //print("date : " + date)
                    RecordArray.append(record)
                    DateArray.append(date)
+                print("id : " + String(format : "%d", sqlite3_column_int(stmtquery, 0)))
+                print("record : " + record)
+                print("date : " + date)
                }
                sqlite3_finalize(stmtquery)
-        if index == 1{
-            print("reload data")
-            tableView.reloadData()
-        } else {
-            print("reload 하지 않음")
-        }
+
     }
     
 }
