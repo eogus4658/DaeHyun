@@ -12,7 +12,9 @@ import CoreLocation
 import AVFoundation
 import SQLite3
 
-class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
+class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, SendDataDelegate {
+    
+    
     
     @IBOutlet weak var myMap: MKMapView!
     @IBOutlet weak var lblTimeInfo: UILabel!
@@ -28,6 +30,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     let interval = 1.0
     let synthesizer = AVSpeechSynthesizer()
     
+    var bRunningRecordTab = false
+    func sendData(data: Bool) {
+        bRunningRecordTab = data
+    }
     var count = 0
     var distance : CLLocationDistance = 0.0
     var bFirst : Bool?
@@ -64,6 +70,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
                }
                print("Everything is fine")
         
+        recordview.delegate = self
         // Do any additional setup after loading the view.
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -215,9 +222,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             let myrecord = "거리 :" + String(format: "%.2f", distance) + " m , 시간 : \(hour!)시간 \(min!)분 \(sec!)초"
             let mydate = formatter.string(from: date as Date)
             recordview._SaveToDatabase(record: myrecord, date: mydate)
-            recordview._UpdateTable()
-            if recordview.tableView != nil {
-                recordview.tableView.reloadData()
+            
+            if bRunningRecordTab == true { // record tab이 한번이라도 실행
+                recordview._UpdateTable(index : 1)
+            } else {
+                recordview._UpdateTable(index : 0)
             }
         }
 
@@ -237,3 +246,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             lblDistanceInfo.text = String(format : "%02f m(미터)", distance)
         }
     }
+
+
+
+

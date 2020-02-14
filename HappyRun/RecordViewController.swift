@@ -9,9 +9,15 @@
 import UIKit
 import SQLite3
 
+protocol SendDataDelegate{
+    func sendData(data : Bool)
+}
+
 class RecordViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var tableView: UITableView!
+    
+    var delegate: SendDataDelegate?
     
     var db : OpaquePointer?
     
@@ -29,7 +35,9 @@ class RecordViewController: UIViewController, UITableViewDelegate, UITableViewDa
         
         
         print("RecordViewController viewdidload")
-       _UpdateTable()
+        _UpdateTable(index : 0)
+        delegate?.sendData(data: true)
+        dismiss(animated: true, completion: nil)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section : Int) -> Int {
@@ -95,7 +103,7 @@ class RecordViewController: UIViewController, UITableViewDelegate, UITableViewDa
         sqlite3_finalize(stmt)
     }
     
-    func _UpdateTable(){
+    func _UpdateTable(index : Int){ // reload : 1 , 그냥 : 0
         print("Updatetable")
         let fileUrl = try!
                FileManager.default.url(for: .documentDirectory,
@@ -134,12 +142,12 @@ class RecordViewController: UIViewController, UITableViewDelegate, UITableViewDa
                    DateArray.append(date)
                }
                sqlite3_finalize(stmtquery)
-//        if tableView != nil{
-//            print("reload data")
-//            tableView.reloadData()
-//        } else {
-//            print("viewdidload 에서 호출")
-//        }
+        if index == 1{
+            print("reload data")
+            tableView.reloadData()
+        } else {
+            print("reload 하지 않음")
+        }
     }
     
 }
